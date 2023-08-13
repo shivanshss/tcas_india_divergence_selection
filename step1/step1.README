@@ -1,0 +1,49 @@
+# Genomic Analysis Pipeline README
+
+## Script Summary
+This script automates a genomic analysis pipeline for processing raw sequencing data. It performs alignment, preprocessing, variant calling, filtering, and annotation of genomic data. The script processes multiple samples in parallel, producing filtered and annotated variant call format (VCF) files for downstream analysis.
+
+## Script Details
+
+### Configuration File
+The script requires a configuration file (`config_file.sh`) to define parameters, paths, and sample information. The configuration file is organized as follows:
+
+- `num_threads`: Number of threads used for parallel processing.
+- `reference_genome`: Path to the reference genome FASTA file.
+- Paths to various software and tools:
+  - `bwa`: Path to BWA aligner executable.
+  - `picard_jar`: Path to PicardTools JAR file.
+  - `gatk`: Path to GATK (Genome Analysis Toolkit) executable.
+  - `samtools`: Path to Samtools executable.
+  - `annovar`: Path to ANNOVAR's `table_annovar.pl` script.
+- `annovar_db`: Path to ANNOVAR's database directory.
+- `genome_build`: Version of the genome build being used.
+- `sample_info`: Associative array containing sample names as keys and paired-end read files as values.
+
+### Script Execution
+The script starts by reading the configuration file and loading the settings into memory. It uses a loop to iterate through each sample defined in the `sample_info` array. For each sample:
+
+- Reads the paired-end read files and extracts their paths.
+- Aligns the reads to the reference genome using BWA, generating a SAM file.
+- Converts the SAM file to a BAM file.
+- Sorts the BAM file.
+- Indexes the sorted BAM file.
+- Removes intermediate SAM and BAM files.
+
+After processing all samples, the script proceeds to the following steps:
+
+- Removes PCR duplicates using PicardTools.
+- Calls SNPs (Single Nucleotide Polymorphisms) using GATK's HaplotypeCaller, creating a raw variants VCF.
+- Merges genotyped VCFs using GATK's GenotypeGVCFs to produce a merged VCF.
+- Filters the merged VCF based on specified criteria using GATK's VariantFiltration.
+- Annotates SNPs using ANNOVAR and the provided ANNOVAR database.
+
+### Execution
+To run the analysis, execute the script in the following way:
+
+```bash
+./[bash_script].sh [config_file.sh]
+
+Replace [bash_script] with the script's filename and [config_file.sh] with the path to the configuration file.
+
+Note: Ensure that the configuration file (config_file.sh) is correctly set up with valid paths and filenames for the reference genome, software tools, and ANNOVAR database. Make sure all required tools are available in the specified paths before running the script.

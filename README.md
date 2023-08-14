@@ -1,7 +1,8 @@
 # tcas_india_divergence_selection
 This repository contains scripts, test data, and sample output files for analysis done for chapter 2 of my PhD thesis
 
-In this project, I use Illumina short read sequences from many samples across 
+In this project, I use Illumina short-read sequences from many samples across many populations. Here we align paired-end short reads to a reference, call variants (SNPs) and annotate those variants on the basis of a genomic feature file (gff).
+We then use these SNPs to understand divergence and selection in the genomes. 
 
 [Step 1](https://github.com/shivanshss/tcas_india_divergence_selection/blob/main/step1/step1.README)
 

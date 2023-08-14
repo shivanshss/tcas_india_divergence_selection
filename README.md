@@ -1,6 +1,8 @@
 # tcas_india_divergence_selection
 This repository contains scripts, test data, and sample output files for analysis done for chapter 2 of my PhD thesis
 
+In this project, I use Illumina short read sequences from many samples across 
+
 [Step 1](https://github.com/shivanshss/tcas_india_divergence_selection/blob/main/step1/step1.README)
 
 

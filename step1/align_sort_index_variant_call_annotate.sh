@@ -45,7 +45,7 @@ for sample_name in "${!sample_info[@]}"; do
     "$gatk" --java-options "-Xmx128g" GenotypeGVCFs -R "$reference_genome" -V ${sample_name}_raw_variants.vcf -O ${sample_name}_merged_variants.vcf
         
     # Step 8: Filter merged VCF
-    "$gatk" VariantFiltration -R "$reference_genome" -V ${sample_name}_merged_variants.vcf -filter "QD < 2.0" --filterName "QD2" -filter "QUAL < 30.0" --filterName "QUAL30" -filter "SOR > 3.0" --filterName "SOR3" -filter "FS > 60.0" --filterName "FS60" -filter "MQ < 40.0" --filterName "MQ40" -filter "MQRankSum < -12.5" --filterName "MQRankSum-12.5" -filter "ReadPosRankSum < -8.0" --filterName "ReadPosRankSum-8" -O ${sample_name}_filtered_variants.vcf
+    "$gatk" VariantFiltration -R "$reference_genome" -V ${sample_name}_merged_variants.vcf -filter "QD < 2.0" --filterName "QD2" -filter "QUAL < 30.0" --filterName "QUAL30" -filter "SOR > 3.0" --filterName "SOR3" -filter "FS > 60.0" --filterName "FS60" -filter "MQ < 40.0" --filterName "MQ40" -filter "MQRankSum < -12.5" --filterName "MQRankSum12.5" -filter "ReadPosRankSum < -8.0" --filterName "ReadPosRankSum8" -O ${sample_name}_filtered_variants.vcf
 
     # Step 9: Annotate SNPs using ANNOVAR
     perl "$annovar" ${sample_name}_filtered_variants.vcf "$annovar_db" -out ${sample_name}_annotated -vcfinput -remove -protocol refGeneWithVer -operation g -format vcf4 -allsample -withfreq -withzyg -nastring . -csvout -polish

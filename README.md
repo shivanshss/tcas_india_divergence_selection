@@ -10,30 +10,82 @@ We then use these SNPs to understand divergence and selection in the genomes.
 Population Genomic Analysis Pipeline Step 1
 
 
-1. Alignment and Data Preparation:
-        Short reads from the sample dataset are aligned to a reference genome using a suitable aligner (e.g., BWA, Li and Durban, 2009).
-        Unaligned or partially aligned reads are filtered out to ensure data quality.
-        PCR duplicates are eliminated using tools like PicardTools to prevent inflated variant counts.
+## The script performs the following tasks:
 
-2. Variant Calling:
-        Single nucleotide polymorphisms (SNPs) are identified using a variant caller (e.g., GATK haplotype caller, DePristo et al, 2011).
-        The variant caller incorporates read information across potential variant sites for accurate variant detection.
+    Input Validation and Setup:
+        It checks for the correct number of command-line arguments.
+        It verifies the existence of the provided configuration file.
+        It sources the configuration file to load required settings.
 
-3. VCF File Conversion and Merging:
-        Genotyped VCF files produced by the variant caller are standardized and merged using relevant tools.
-        The merged VCF file consolidates variant information across multiple samples.
+    Output Directory Creation:
+        It creates an output directory named "output" to store analysis results.
 
-4. Variant Filtering:
-        The merged VCF file is subject to stringent filtering criteria to ensure reliable variant calls.
-        Filters include parameters like minimum quality score, read depth thresholds, allele frequency bounds, and individual missingness.
-        After filtering, variants meeting quality criteria are retained for further analysis.
+    Sample Processing Loop:
 
-5. SNP Annotation:
-        ANNOVAR (Wang et al, 2010) is employed to annotate retained SNPs based on a genomic annotation file (e.g., GFF3).
-        Annotations provide functional context by associating variants with genomic features.
+        For each sample specified in the configuration file, the script performs the following steps:
 
-6. Population Genomic Analysis:
-        The filtered and annotated VCF dataset serves as the foundation for population genomic analysis.
-        This analysis investigates aspects like genetic diversity, population structure, allele frequencies, and potential evolutionary insights.
+        a. Read Trimming using Trimmomatic:
+            Trims low-quality reads and adapter sequences using Trimmomatic.
+            Generates log files for trimming.
 
+        b. FastQC Analysis:
+            Runs FastQC on trimmed reads to assess read quality.
+            Stores the FastQC results in a "fastqc_trimmed" subdirectory.
+
+        c. Read Alignment with BWA:
+            Aligns trimmed reads to a reference genome using BWA.
+            Generates a SAM file.
+
+        d. Convert SAM to BAM:
+            Converts the SAM file to the more efficient BAM format.
+
+        e. BAM Sorting:
+            Sorts the BAM file for efficient processing.
+
+        f. BAM Indexing:
+            Creates an index for the sorted BAM file.
+
+        g. PCR Duplicate Removal:
+            Removes PCR duplicates from the sorted BAM file using PicardTools.
+
+        h. Variant Calling with GATK HaplotypeCaller:
+            Calls variants (SNPs) using GATK HaplotypeCaller.
+            Outputs raw variant calls in VCF format.
+
+        i. GenotypeGVCFs:
+            Converts genotyped VCFs into merged VCF format using GenotypeGVCFs.
+
+        j. Variant Filtering with GATK:
+            Filters variants based on various quality criteria using GATK VariantFiltration.
+
+        k. Variant Annotation with ANNOVAR:
+            Annotates variants using ANNOVAR, providing additional information about the variants.
+
+    Clean-Up:
+        Removes intermediate files (SAM, unsorted BAM) to conserve disk space.
+
+    Completion Message:
+        Displays "Analysis complete!" when all samples have been processed.
+
+## Usage
+
+To use the script, follow these steps:
+
+    Prerequisites:
+        Ensure you have all the required tools and dependencies installed, including Trimmomatic, FastQC, BWA, Samtools, PicardTools, GATK, and ANNOVAR.
+        Place the reference genome and adapter sequences in the appropriate locations as specified in your configuration file.
+
+    Configuration File:
+        Create a configuration file (e.g., config.txt) containing the necessary settings for your analysis. Refer to the script's source code for the expected format of this file.
+
+    Run the Script:
+        Execute the script by providing the path to your configuration file as the only command-line argument.
+        Example: ./analysis_script.sh config.txt
+
+    Monitor Progress:
+        The script will process each sample as defined in the configuration file.
+        You can monitor the progress and check for any potential issues by examining the output and log files in the "output" directory.
+
+    Results:
+        Once the script completes the analysis for all samples, you can find the final annotated variant files in the respective sample directories within the "output" directory.
 

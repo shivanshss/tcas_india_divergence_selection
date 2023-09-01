@@ -18,11 +18,12 @@ output_dir="output"
 mkdir -p "$output_dir"
 
 # Step 3: Loop through sample_info and process each sample
-for sample_name in "${!sample_info[@]}"; do
-    read_files="${sample_info[$sample_name]}"
-    read_files_arr=($read_files)
-    read1="${read_files_arr[0]}"
-    read2="${read_files_arr[1]}"
+# Splitting sample_info into variables
+IFS=$'\n' # Set the Internal Field Separator to newline to iterate through the samples
+for sample_info_line in "${sample_info[@]}"; do
+    sample_name=$(echo "$sample_info_line" | cut -d ' ' -f 1)
+    read1=$(echo "$sample_info_line" | cut -d ' ' -f 2)
+    read2=$(echo "$sample_info_line" | cut -d ' ' -f 3)
     
     # Define the sample_output_dir
     sample_output_dir="$output_dir/$sample_name"
